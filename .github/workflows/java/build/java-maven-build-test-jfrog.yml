@@ -1,0 +1,107 @@
+name: Build and Test workflow for Spring Boot microservices
+
+on:
+  workflow_call:
+    inputs:
+      # pass in environment through manual trigger, if not passed in, default to 'dev'
+      env:
+        required: true
+        type: string
+        default: 'dev'
+      # working-directory is added to accommodate monorepo.  For multi repo, defaults to '.', current directory
+      working-directory:
+        required: false
+        type: string
+        default: '.'
+      # pass in java version to allow different app requiring different java versions to reuse the same workflow, default to java 17
+      java-version:
+        required: false
+        type: string
+        default: '17'
+      # allowing calling workflows to pass in maven parameter(s) such as '-Dmaven.test.skip' for certain apps, default to blank, not to skip test
+      maven-params:
+        required: false
+        type: string
+        default: ''
+
+jobs:
+
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    # accommodating monorepo, this sets the working directory at the job level, for multi repo, defaults to "."
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    # important to specify environment here, defaults to 'dev', so github ations knows where to retrieve the secrets
+    environment: ${{ inputs.env || 'dev' }}
+
+    # only run this job for auto trigger by PR merge, if manual trigger for other environments than dev,
+    # no need to run this job as the image will be pulled and promoted to envs higher than dev
+    # also dependabot PRs do not need to run this flow as GitHub prohibits dependabot PRs to access workflows
+    # dealing with secrets due to security reason.
+    if: (inputs.env == null || inputs.env == 'dev') && github.actor != 'dependabot[bot]'
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
+      - name: Checkout Code
+        uses: actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28
+
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838
+      #   with:
+      #     role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+      #     aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup jdk
+        uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean install ${{ inputs.maven-params }} --file pom.xml
+
+      - name: Set project version as environment variable
+        run: echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+
+      - name: Print debug info
+        run: |
+          echo environment is ${{ inputs.env }}
+          echo working_directory is ${{ inputs.working-directory }}
+          echo project version is ${{ env.PROJECT_VERSION }}
+          echo java-version is ${{ inputs.java-version }}
+      
+      - name: Login to JFrog 🐸  
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.JFROG_URL }}
+          username: ${{ secrets.JFROG_USER }}
+          password: ${{ secrets.JFROG_PASSWORD }}
+
+      - name: Build and push 🐳
+        id: build-image
+        env:
+          JFROG_URL: ${{ secrets.JFROG_URL }}
+          JAVA_REPOSITORY: ${{ secrets.JAVA_REPOSITORY }}
+          IMAGE_TAG: ${{ env.PROJECT_VERSION }}
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: $JFROG_URL/$JAVA_REPOSITORY:$IMAGE_TAG
+
+      - name: Scan ECR image with Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@9ab158e8597f3b310480b9a69402b419bc03dbd5
+        with:
+          image-ref: ${{ steps.build-image.outputs.image }}
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
