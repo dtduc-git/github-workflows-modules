@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Set environment variables
         run: |
-          echo "JFROG_URL=${{ secrets.JFROG_URL }}" >> $GITHUB_EN
+          echo "JFROG_URL=${{ secrets.JFROG_URL }}" >> $GITHUB_ENV
           echo "GOLANG_REPOSITORY=${{ secrets.GOLANG_REPOSITORY }}" >> $GITHUB_ENV
           echo "GOLANG_IMAGE=${{ secrets.GOLANG_IMAGE }}" >> $GITHUB_ENV
           echo "GOLANG_TAG=${{ env.GITHUB_SHA }}" >> $GITHUB_ENV
