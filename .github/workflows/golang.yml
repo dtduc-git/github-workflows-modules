@@ -74,7 +74,7 @@ jobs:
         with:
           # context: .
           push: true
-          tags: ${{ secrets.JFROG_URL }}/golang-artifactory/testing:latest
+          tags: '${{ secrets.JFROG_URL }}/golang-artifactory/testing:latest'
 
       # - name: Build and push 🐳
       #   id: build-image
