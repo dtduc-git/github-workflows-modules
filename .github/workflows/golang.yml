@@ -38,10 +38,7 @@ jobs:
           GOLANG_IMAGE: ${{ secrets.GOLANG_IMAGE }}
           GOLANG_TAG: ${{ secrets.GOLANG_TAG }}
         run: |
-          echo "JFROG_URL=$(echo $JFROG_URL | base64 -d )" >> $GITHUB_ENV
-          echo "GOLANG_REPOSITORY=$(echo $GOLANG_REPOSITORY | base64 -d )" >> $GITHUB_ENV
-          echo "GOLANG_IMAGE=$(echo $GOLANG_IMAGE | base64 -d )" >> $GITHUB_ENV
-          echo "GOLANG_TAG=$(echo $GOLANG_TAG | base64 -d )" >> $GITHUB_ENV
+          echo $JFROG_URL | base64 -d
 
       - name: Login to JFrog 🐸  
         uses: docker/login-action@v1
