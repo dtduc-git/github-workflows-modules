@@ -35,7 +35,11 @@ jobs:
       - name: Build and push 🐳
         id: build-image
         run: |
-          # Build a docker container and push it to ECR so that it can be deployed to ECS.
+          # Build a docker container and push it to jfrog so that it can be deployed to EKS.
+          echo $JFROG_URL
+          echo $GOLANG_REPOSITORY
+          echo $GOLANG_IMAGE
+          echo $GOLANG_TAG
           echo ${JFROG_URL}/${GOLANG_REPOSITORY}/${GOLANG_IMAGE}:${GOLANG_TAG}
           docker build -t ${JFROG_URL}/${GOLANG_REPOSITORY}/${GOLANG_IMAGE}:${GOLANG_TAG} .
           docker push ${JFROG_URL}/${GOLANG_REPOSITORY}/${GOLANG_IMAGE}:${GOLANG_TAG}
