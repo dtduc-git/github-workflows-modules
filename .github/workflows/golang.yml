@@ -34,6 +34,11 @@ jobs:
 
       - name: Build and push 🐳
         id: build-image
+        env:
+          JFROG_URL: ${{ env.JFROG_URL }}
+          GOLANG_REPOSITORY: ${{ env.GOLANG_REPOSITORY }}
+          GOLANG_IMAGE: ${{ env.GOLANG_IMAGE }}
+          GOLANG_TAG: ${{ env.GOLANG_TAG }}
         run: |
           # Build a docker container and push it to jfrog so that it can be deployed to EKS.
           echo $JFROG_URL
