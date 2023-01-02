@@ -1,5 +1,4 @@
 name: golang-unit-test
-on: push
 
 on:
   workflow_call:
