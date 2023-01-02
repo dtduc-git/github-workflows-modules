@@ -56,10 +56,9 @@ jobs:
       - name: Login to JFrog 🐸  
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
-          registry: ${{ secrets.JFROG_URL }}
+          registry: ${{ env.JFROG_URL }}
           username: ${{ secrets.JFROG_USER }}
           password: ${{ secrets.JFROG_PASSWORD }}
-          logout: false
       
       # - name: Extract metadata (tags, labels) for Docker
       #   id: meta
@@ -74,7 +73,8 @@ jobs:
         with:
           # context: .
           push: true
-          tags: '${{ secrets.JFROG_URL }}/golang-artifactory/testing:latest'
+          # tags: ${{ env.JFROG_URL }}/golang-artifactory/testing:latest
+          tags: ${{ env.JFROG_URL }}/${{ env.GOLANG_REPOSITORY }}/${{ env.GOLANG_IMAGE }}:${{ env.GOLANG_TAG }}
 
       # - name: Build and push 🐳
       #   id: build-image
