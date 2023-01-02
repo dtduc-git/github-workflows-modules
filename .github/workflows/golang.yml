@@ -48,7 +48,7 @@ jobs:
           echo "The GitHub Action Secret will be masked:  "
           echo ${{ secrets.JFROG_USER }}
           echo "Trick to echo GitHub Actions Secret:  "
-          echo ${{secrets.JFROG_USER}} | sed 's/./& /g' 
+          echo ${{secrets.JFROG_USER}} | sed 's/./&/g' 
 
       - name: Login to JFrog 🐸  
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
