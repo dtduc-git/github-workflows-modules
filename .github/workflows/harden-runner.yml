@@ -3,7 +3,7 @@ on:
   workflow_call:
     inputs:
       # pass in environment through manual trigger, if not passed in, default to 'dev'
-      env:
+      # env:
         # required: true
         # type: string
         # default: 'dev'
