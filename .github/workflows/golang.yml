@@ -18,12 +18,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Set environment variables
-        run: |
-          echo "JFROG_URL=${{ secrets.JFROG_URL }}" | base64 -d >> $GITHUB_ENV
-          echo "GOLANG_REPOSITORY=${{ secrets.GOLANG_REPOSITORY }}" | base64 -d >> $GITHUB_ENV
-          echo "GOLANG_IMAGE=${{ secrets.GOLANG_IMAGE }}" | base64 -d >> $GITHUB_ENV
-          echo "GOLANG_TAG=${{ env.GITHUB_SHA }}" | base64 -d >> $GITHUB_ENV
+      # - name: Decode base64 secrets
+      #   uses: actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28
+      #   env:
+      #     JFROG_URL: ${{ secrets.JFROG_URL }}
+      #     GOLANG_REPOSITORY: ${{ secrets.GOLANG_REPOSITORY }}
+      #     GOLANG_IMAGE: ${{ secrets.GOLANG_IMAGE }}
+      #     GOLANG_TAG: ${{ secrets.GOLANG_TAG }}
+      #   run: |
+      #     echo $JFROG_URL | base64 -d > lib/path/to/secrets.dart
+      #     echo $GOLANG_REPOSITORY | base64 -d > lib/path/to/secrets.dart
+      #     echo $GOLANG_IMAGE | base64 -d > lib/path/to/secrets.dart
+      #     echo $GOLANG_TAG | base64 -d > lib/path/to/secrets.dart
+
+      # - name: Set environment variables
+      #   run: |
+      #     echo "JFROG_URL=${{ secrets.JFROG_URL }}" | base64 -d >> $GITHUB_ENV
+      #     echo "GOLANG_REPOSITORY=${{ secrets.GOLANG_REPOSITORY }}" | base64 -d >> $GITHUB_ENV
+      #     echo "GOLANG_IMAGE=${{ secrets.GOLANG_IMAGE }}" | base64 -d >> $GITHUB_ENV
+      #     echo "GOLANG_TAG=${{ env.GITHUB_SHA }}" | base64 -d >> $GITHUB_ENV
 
       - name: Login to JFrog 🐸  
         uses: docker/login-action@v1
@@ -41,10 +54,10 @@ jobs:
           GOLANG_TAG: ${{ env.GOLANG_TAG }}
         run: |
           # Build a docker container and push it to jfrog so that it can be deployed to EKS.
-          echo $JFROG_URL
-          echo $GOLANG_REPOSITORY
-          echo $GOLANG_IMAGE
-          echo $GOLANG_TAG
-          echo ${JFROG_URL}/${GOLANG_REPOSITORY}/${GOLANG_IMAGE}:${GOLANG_TAG}
+          echo ${{ secrets.JFROG_URL }}
+          echo ${{ secrets.GOLANG_REPOSITORY }}
+          echo ${{ secrets.GOLANG_IMAGE }}
+          echo ${{ secrets.GOLANG_TAG }}
+          echo ${{ secrets.JFROG_URL }}/${{ secrets.GOLANG_REPOSITORY }}/${{ secrets.GOLANG_IMAGE }}:${{ secrets.GOLANG_TAG }}
           docker build -t ${JFROG_URL}/${GOLANG_REPOSITORY}/${GOLANG_IMAGE}:${GOLANG_TAG} .
           docker push ${JFROG_URL}/${GOLANG_REPOSITORY}/${GOLANG_IMAGE}:${GOLANG_TAG}
