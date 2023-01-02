@@ -1,5 +1,4 @@
 name: golang-pipeline
-on: push
 
 on:
   workflow_call:
