@@ -72,7 +72,7 @@ jobs:
       - name: Login to JFrog 🐸  
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
-          registry: ${{ github.event.inputs.JFROG_URL }}
+          registry: ${{ inputs.JFROG_URL }}
           username: ${{ secrets.JFROG_USER }}
           password: ${{ secrets.JFROG_PASSWORD }}
       
@@ -90,7 +90,7 @@ jobs:
           # context: .
           push: true
           # tags: ${{ env.JFROG_URL }}/golang-artifactory/testing:latest
-          tags: ${{ env.JFROG_URL }}/${{ env.GOLANG_REPOSITORY }}/${{ env.GOLANG_IMAGE }}:${{ env.GOLANG_TAG }}
+          tags: ${{ inputs.JFROG_URL }}/${{ inputs.GOLANG_REPOSITORY }}/${{ inputs.GOLANG_IMAGE }}:${{ inputs.GOLANG_TAG }}
 
       # - name: Build and push 🐳
       #   id: build-image
