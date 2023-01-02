@@ -1,0 +1,23 @@
+name: golang-unit-test
+
+on:
+  workflow_call:
+    inputs:
+      # pass in environment through manual trigger, if not passed in, default to 'dev'
+      env:
+        required: true
+        type: string
+        default: 'dev'
+      # working-directory is added to accommodate monorepo.  For multi repo, defaults to '.', current directory
+      working-directory:
+        required: false
+        type: string
+        default: '.'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Unit Tests
+        run: go test
