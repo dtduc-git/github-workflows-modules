@@ -31,12 +31,14 @@ jobs:
       #     echo $GOLANG_IMAGE | base64 -d > lib/path/to/secrets.dart
       #     echo $GOLANG_TAG | base64 -d > lib/path/to/secrets.dart
 
-      - name: Set environment variables
-        shell: bash
-        env:
-          JFROG_URL: ${{ secrets.JFROG_URL }}
-        run: |
-          echo $JFROG_URL | base64 -d
+      # - name: Set environment variables
+      #   shell: bash
+      #   env:
+      #     JFROG_URL: ${{ secrets.JFROG_URL }}
+      #   run: |
+      #     echo $JFROG_URL
+      #     echo ${{ secrets.JFROG_URL }}
+      #     echo $JFROG_URL | base64 -d
 
       - name: Login to JFrog 🐸  
         uses: docker/login-action@v1
@@ -47,17 +49,8 @@ jobs:
 
       - name: Build and push 🐳
         id: build-image
-        # env:
-        #   JFROG_URL: ${{ env.JFROG_URL }}
-        #   GOLANG_REPOSITORY: ${{ env.GOLANG_REPOSITORY }}
-        #   GOLANG_IMAGE: ${{ env.GOLANG_IMAGE }}
-        #   GOLANG_TAG: ${{ env.GOLANG_TAG }}
         run: |
           # Build a docker container and push it to jfrog so that it can be deployed to EKS.
-          echo $JFROG_URL
-          echo $GOLANG_REPOSITORY
-          echo $GOLANG_IMAGE
-          echo $GOLANG_TAG
           echo ${{ secrets.JFROG_URL }}/${{ secrets.GOLANG_REPOSITORY }}/${{ secrets.GOLANG_IMAGE }}:${{ secrets.GOLANG_TAG }}
           docker build -t ${JFROG_URL}/${GOLANG_REPOSITORY}/${GOLANG_IMAGE}:${GOLANG_TAG} .
           docker push ${JFROG_URL}/${GOLANG_REPOSITORY}/${GOLANG_IMAGE}:${GOLANG_TAG}
