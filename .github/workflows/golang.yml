@@ -59,6 +59,7 @@ jobs:
           registry: ${{ secrets.JFROG_URL }}
           username: ${{ secrets.JFROG_USER }}
           password: ${{ secrets.JFROG_PASSWORD }}
+          logout: false
       
       # - name: Extract metadata (tags, labels) for Docker
       #   id: meta
