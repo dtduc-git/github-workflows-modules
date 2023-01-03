@@ -34,37 +34,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # - name: Decode base64 secrets
-      #   uses: actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28
-      #   env:
-      #     JFROG_URL: ${{ secrets.JFROG_URL }}
-      #     GOLANG_REPOSITORY: ${{ secrets.GOLANG_REPOSITORY }}
-      #     GOLANG_IMAGE: ${{ secrets.GOLANG_IMAGE }}
-      #     GOLANG_TAG: ${{ secrets.GOLANG_TAG }}
-      #   run: |
-      #     echo $JFROG_URL | base64 -d > lib/path/to/secrets.dart
-      #     echo $GOLANG_REPOSITORY | base64 -d > lib/path/to/secrets.dart
-      #     echo $GOLANG_IMAGE | base64 -d > lib/path/to/secrets.dart
-      #     echo $GOLANG_TAG | base64 -d > lib/path/to/secrets.dart
-
-      # - name: Set environment variables
-      #   shell: bash
-      #   env:
-      #     JFROG_URL: ${{ secrets.JFROG_URL }}
-      #   run: |
-      #     echo $JFROG_URL
-      #     echo ${{ secrets.JFROG_URL }}
-      #     echo $JFROG_URL | base64 -d
-
-      # - name: Testing
-      #   shell: bash
-      #   env:
-      #     JFROG_URL: ${{ secrets.JFROG_URL }}
-      #   run: |
-      #     echo "The GitHub Action Secret will be masked:  "
-      #     echo ${{ secrets.JFROG_USER }}
-      #     echo "Trick to echo GitHub Actions Secret:  "
-      #     echo ${{secrets.JFROG_USER}} | sed 's/./& /g' 
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -75,27 +44,10 @@ jobs:
           registry: ${{ inputs.JFROG_URL }}
           username: ${{ secrets.JFROG_USER }}
           password: ${{ secrets.JFROG_PASSWORD }}
-      
-      # - name: Extract metadata (tags, labels) for Docker
-      #   id: meta
-      #   uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-      #   with:
-      #     images: |
-      #       my-docker-hub-namespace/my-docker-hub-repository
-      #       ghcr.io/${{ github.repository }}
 
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
           # context: .
           push: true
-          # tags: ${{ env.JFROG_URL }}/golang-artifactory/testing:latest
           tags: ${{ inputs.JFROG_URL }}/${{ inputs.GOLANG_REPOSITORY }}/${{ inputs.GOLANG_IMAGE }}:${{ inputs.GOLANG_TAG }}
-
-      # - name: Build and push 🐳
-      #   id: build-image
-      #   run: |
-      #     # Build a docker container and push it to jfrog so that it can be deployed to EKS.
-      #     echo ${{ secrets.JFROG_URL }}/${{ secrets.GOLANG_REPOSITORY }}/${{ secrets.GOLANG_IMAGE }}:${{ secrets.GOLANG_TAG }}
-      #     docker build -t ${JFROG_URL}/${GOLANG_REPOSITORY}/${GOLANG_IMAGE}:${GOLANG_TAG} .
-      #     docker push ${JFROG_URL}/${GOLANG_REPOSITORY}/${GOLANG_IMAGE}:${GOLANG_TAG}
