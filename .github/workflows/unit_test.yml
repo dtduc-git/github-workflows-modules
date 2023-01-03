@@ -15,4 +15,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run Unit Tests
-        run: go test ./auth/usecase/usecase_test.go
+        run: go test ./...
