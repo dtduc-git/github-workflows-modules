@@ -33,8 +33,9 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    container:
+      image: golang:bullseye
     steps:
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
