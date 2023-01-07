@@ -13,6 +13,11 @@ jobs:
   test:
     runs-on: golang-runner
     steps:
+      - name: Set up Go 1.17
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+          id: Go
       - uses: actions/checkout@v2
       - name: Run Unit Tests
         run: go test ./...
