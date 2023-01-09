@@ -13,6 +13,11 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 4 * * *" # run once a day at 4 AM
+
+defaults:
+ run:
+  working-directory: /runner/_work
+
 jobs:
   scan:
     name: gitleaks
