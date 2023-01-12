@@ -36,7 +36,9 @@ jobs:
     steps:
 
       - name: Samsex check
-        run: ls -al
+        run: |
+          pwd
+          ls -al
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
