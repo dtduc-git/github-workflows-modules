@@ -35,6 +35,9 @@ jobs:
     runs-on: golang-runner
     steps:
 
+      - name: Samsex check
+        run: ls -al
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
